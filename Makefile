@@ -8,8 +8,13 @@ build: bindata
 	go build -o ${name} ./${wd}
 
 
+install: bindata
+	go install ./${wd}
+
 run: build
 	./${name} ./testdata
+
+
 
 
 bindata:

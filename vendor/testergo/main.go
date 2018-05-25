@@ -19,7 +19,7 @@ import (
 )
 
 var args struct {
-	Dir      string `argum:"pos" help:"path to working directory"`
+	Dir      string `argum:"pos" help:"path to working directory" default:"./"`
 	Address  string `argum:"--address" help:"listening address" default:":8000"`
 	Headless bool   `argum:"--headless" help:"do not open url in browser"`
 }

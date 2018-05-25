@@ -3,11 +3,11 @@ package name
 import "testing"
 
 func TestLog(t *testing.T) {
-	t.Log("log")
+	t.Log("log message")
 }
 
 func TestFail(t *testing.T) {
-	t.Error("asdasd")
+	t.Error("some error message")
 }
 
 func TestPanic(t *testing.T) {

@@ -5,8 +5,11 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os/exec"
+	"runtime"
 	"time"
 
+	"github.com/pkg/browser"
 	"github.com/sg3des/argum"
 	"github.com/sg3des/rattle"
 
@@ -16,8 +19,9 @@ import (
 )
 
 var args struct {
-	Dir     string `argum:"pos" help:"path to working directory"`
-	Address string `argum:"--address" help:"listening address" default:":8000"`
+	Dir      string `argum:"pos" help:"path to working directory"`
+	Address  string `argum:"--address" help:"listening address" default:":8000"`
+	Headless bool   `argum:"--headless" help:"do not open url in browser"`
 }
 
 var t *Testergo
@@ -28,18 +32,18 @@ func init() {
 }
 
 func main() {
-	err := initTestergo(args.Dir, args.Address)
+	err := initTestergo(args.Dir, args.Address, args.Headless)
 	if err != nil {
 		log.Fatal(err)
 	}
 }
 
-func initTestergo(dir, addr string) (err error) {
+func initTestergo(dir, addr string, headless bool) (err error) {
 	t = &Testergo{
-		wsaddr: addrToWS(addr),
+		addr: parseAddr(addr),
 	}
 
-	t.tester, err = tester.NewTester(args.Dir)
+	t.tester, err = tester.NewTester(dir)
 	if err != nil {
 		return
 	}
@@ -55,16 +59,16 @@ func initTestergo(dir, addr string) (err error) {
 	http.HandleFunc("/", t.Index)
 	http.HandleFunc("/assets/", t.Assets)
 
+	if !headless {
+		go browser.OpenURL("http://" + t.addr)
+	}
+
 	fmt.Println("listen:", addr)
 	return http.ListenAndServe(addr, nil)
 }
 
-func addrToWS(addr string) string {
-	if len(addr) == 0 {
-		return addr
-	}
-
-	if addr[0] == ':' {
+func parseAddr(addr string) string {
+	if len(addr) > 0 && addr[0] == ':' {
 		return "127.0.0.1" + addr
 	}
 
@@ -72,8 +76,7 @@ func addrToWS(addr string) string {
 }
 
 type Testergo struct {
-	wsaddr string
-
+	addr   string
 	tester *tester.Tester
 	event  chan bool
 }
@@ -83,7 +86,7 @@ type Testergo struct {
 //
 
 func (t *Testergo) Index(w http.ResponseWriter, r *http.Request) {
-	templates.Index(w, t.wsaddr)
+	templates.Index(w, t.addr)
 }
 
 //Assets serve static files stored to go code how bind-data
@@ -132,4 +135,32 @@ func (*Testergo) onConnect(r *rattle.Conn) {
 		<-t.event
 		t.State(r)
 	}
+}
+
+func browserCmd() (string, bool) {
+	browser := map[string]string{
+		"darwin": "open",
+		"linux":  "xdg-open",
+		"win32":  "start",
+	}
+	cmd, ok := browser[runtime.GOOS]
+	return cmd, ok
+}
+
+func launchBrowser(addr string) {
+	browser, ok := browserCmd()
+	if !ok {
+		log.Printf("Skipped launching browser for this OS: %s", runtime.GOOS)
+		return
+	}
+
+	log.Printf("Launching browser on %s", addr)
+	url := fmt.Sprintf("http://%s", addr)
+	cmd := exec.Command(browser, url)
+
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		log.Println(err)
+	}
+	log.Println(string(output))
 }

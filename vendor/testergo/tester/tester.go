@@ -70,6 +70,7 @@ func (t *Tester) events(c chan bool) {
 	for t.running {
 		select {
 		case <-t.watcher.Events:
+			c <- false
 			t.RunTests()
 			c <- true
 

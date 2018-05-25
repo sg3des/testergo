@@ -1,14 +1,5 @@
 || import "testergo/tester"
 
-|| template JS(w io.Writer, addr string)
-<script type="application/javascript" defer>
-new rattle.NewConnection("ws://{{=addr}}/ws", true);
-function favicon(name) {
-	document.getElementById("favicon").href = "/assets/"+name+".png";
-}
-</script>
-|| end
-
 || template Index(w io.Writer, addr string)
 <!DOCTYPE html>
 <html>
@@ -19,11 +10,17 @@ function favicon(name) {
 	<link rel="stylesheet"    href="/assets/main.css">
 	<link id='favicon' rel="shortcut icon" href="/assets/pass.png" type="image/png">
 
+	<script src="/assets/main.js"></script>
 	<script src="/assets/rattle.js"></script>
-	|| JS(w, addr)
+	<script type="application/javascript" defer>
+		new rattle.NewConnection("ws://{{=addr}}/ws", true);
+	</script>
 </head>
 <body>
-	<header></header>
+	<header>
+		<div id='status'></div>
+		<div id='loading'></div>
+	</header>
 	<main></main>
 </body>
 </html>
@@ -41,9 +38,4 @@ function favicon(name) {
 			</div>
 		</div>
 	|| }
-|| end
-
-
-|| template Status(status string)
-<div class='status {{=status}}'>{{=strings.ToTitle(status)}}</div>
 || end

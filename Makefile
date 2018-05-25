@@ -12,7 +12,7 @@ install: bindata
 	go install ./${wd}
 
 run: build
-	./${name} ./testdata
+	./${name} --headless ./testdata
 
 
 

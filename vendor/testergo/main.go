@@ -123,8 +123,7 @@ func (t *Testergo) Assets(w http.ResponseWriter, r *http.Request) {
 //
 
 func (*Testergo) State(r *rattle.Conn) {
-	r.NewMessage("favicon", []byte(t.tester.Status)).Send()
-	r.NewMessage("=header", templates.Status(t.tester.Status)).Send()
+	r.NewMessage("status", []byte(t.tester.Status)).Send()
 	r.NewMessage("=main", templates.Tests(t.tester)).Send()
 }
 
@@ -132,7 +131,13 @@ func (*Testergo) onConnect(r *rattle.Conn) {
 	t.State(r)
 
 	for {
-		<-t.event
+		c := <-t.event
+
+		if !c {
+			r.NewMessage("loading").Send()
+			continue
+		}
+
 		t.State(r)
 	}
 }

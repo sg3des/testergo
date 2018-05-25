@@ -4,18 +4,8 @@ import (
 	"bytes"
 	"fmt"
 	"io"
-	"strings"
 	"testergo/tester"
 )
-
-func JS(w io.Writer, addr string) {
-	w.Write([]byte(`<script type="application/javascript" defer>`))
-	fmt.Fprintf(w, `new rattle.NewConnection("ws://%v/ws", true);`, addr)
-	w.Write([]byte(`function favicon(name) {
-	document.getElementById("favicon").href = "/assets/"+name+".png";
-}
-</script>`))
-}
 
 func Index(w io.Writer, addr string) {
 	w.Write([]byte(`<!DOCTYPE html>
@@ -25,11 +15,17 @@ func Index(w io.Writer, addr string) {
 	<title>Testergo</title>
 	<link rel="stylesheet"    href="/assets/main.css">
 	<link id='favicon' rel="shortcut icon" href="/assets/pass.png" type="image/png">
-	<script src="/assets/rattle.js"></script>`))
-	JS(w, addr)
-	w.Write([]byte(`</head>
+	<script src="/assets/main.js"></script>
+	<script src="/assets/rattle.js"></script>
+	<script type="application/javascript" defer>`))
+	fmt.Fprintf(w, `		new rattle.NewConnection("ws://%v/ws", true);`, addr)
+	w.Write([]byte(`	</script>
+</head>
 <body>
-	<header></header>
+	<header>
+		<div id='status'></div>
+		<div id='loading'></div>
+	</header>
 	<main></main>
 </body>
 </html>`))
@@ -48,12 +44,5 @@ func Tests(t *tester.Tester) []byte {
 		w.Write([]byte(`			</div>
 		</div>`))
 	}
-	return w.Bytes()
-}
-
-func Status(status string) []byte {
-	w := new(bytes.Buffer)
-	fmt.Fprintf(w, `<div class='status %v`, status)
-	fmt.Fprintf(w, `'>%v</div>`, strings.ToTitle(status))
 	return w.Bytes()
 }

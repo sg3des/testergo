@@ -2,6 +2,7 @@
 // sources:
 // vendor/testergo/assets/fail.png
 // vendor/testergo/assets/main.css
+// vendor/testergo/assets/main.js
 // vendor/testergo/assets/panic.png
 // vendor/testergo/assets/pass.png
 // vendor/testergo/assets/rattle.js
@@ -53,6 +54,24 @@ func assetsFailPng() (*asset, error) {
 func assetsMainCss() (*asset, error) {
 	path := "/work/go/src/github.com/sg3des/testergo/vendor/testergo/assets/main.css"
 	name := "assets/main.css"
+	bytes, err := bindataRead(path, name)
+	if err != nil {
+		return nil, err
+	}
+
+	fi, err := os.Stat(path)
+	if err != nil {
+		err = fmt.Errorf("Error reading asset info %s at %s: %v", name, path, err)
+	}
+
+	a := &asset{bytes: bytes, info: fi}
+	return a, err
+}
+
+// assetsMainJs reads file data from disk. It returns an error on failure.
+func assetsMainJs() (*asset, error) {
+	path := "/work/go/src/github.com/sg3des/testergo/vendor/testergo/assets/main.js"
+	name := "assets/main.js"
 	bytes, err := bindataRead(path, name)
 	if err != nil {
 		return nil, err
@@ -175,6 +194,7 @@ func AssetNames() []string {
 var _bindata = map[string]func() (*asset, error){
 	"assets/fail.png": assetsFailPng,
 	"assets/main.css": assetsMainCss,
+	"assets/main.js": assetsMainJs,
 	"assets/panic.png": assetsPanicPng,
 	"assets/pass.png": assetsPassPng,
 	"assets/rattle.js": assetsRattleJs,
@@ -223,6 +243,7 @@ var _bintree = &bintree{nil, map[string]*bintree{
 	"assets": &bintree{nil, map[string]*bintree{
 		"fail.png": &bintree{assetsFailPng, map[string]*bintree{}},
 		"main.css": &bintree{assetsMainCss, map[string]*bintree{}},
+		"main.js": &bintree{assetsMainJs, map[string]*bintree{}},
 		"panic.png": &bintree{assetsPanicPng, map[string]*bintree{}},
 		"pass.png": &bintree{assetsPassPng, map[string]*bintree{}},
 		"rattle.js": &bintree{assetsRattleJs, map[string]*bintree{}},

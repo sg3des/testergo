@@ -1,0 +1,21 @@
+*{position: relative; margin:0; cursor: default;}
+html{font-family: sans-serif; background: #252525; color: #eee;}
+
+.status{line-height: 40px; text-align: center; font-size: 1.2em; cursor: default;}
+.status.pass{background: #339944;}
+.status.fail{background: #aa4433;}
+.status.panic{background: #aa2211;}
+
+nav{line-height: 30px; padding-left: 15px; background: #333;}
+
+.func{padding-left: 15px; border-bottom: 1px;}
+.func:nth-child(even){background: #252525;}
+.func:nth-child(odd){background: #2a2a2a;}
+
+.func.pass{border-left: 5px solid #339944;}
+.func.fail{border-left: 5px solid #aa5544;}
+.func.panic{border-left: 5px solid #aa2211;}
+
+.name{line-height: 30px;}
+.log{padding-left: 15px; font-size: 0.95em; color: #aaa; font-family: monospace; }
+.log > *{white-space: pre-wrap;}

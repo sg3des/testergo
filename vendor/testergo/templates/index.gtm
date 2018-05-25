@@ -1,0 +1,49 @@
+|| import "testergo/tester"
+
+|| template JS(w io.Writer, addr string)
+<script type="application/javascript" defer>
+new rattle.NewConnection("ws://{{=addr}}/ws", true);
+function favicon(name) {
+	document.getElementById("favicon").href = "/assets/"+name+".png";
+}
+</script>
+|| end
+
+|| template Index(w io.Writer, addr string)
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Testergo</title>
+
+	<link rel="stylesheet"    href="/assets/main.css">
+	<link id='favicon' rel="shortcut icon" href="/assets/pass.png" type="image/png">
+
+	<script src="/assets/rattle.js"></script>
+	|| JS(w, addr)
+</head>
+<body>
+	<header></header>
+	<main></main>
+</body>
+</html>
+|| end
+
+|| template Tests(t *tester.Tester)
+	<nav>{{=t.Dir}}</nav>
+	|| for _, r := range t.Response {
+		<div class='func {{=r.Status}}'>
+			<div class='name'>{{=r.Func}}</div>
+			<div class='log'>
+				|| for _, s := range r.Log {
+					<p>{{=s}}</p>
+				|| }
+			</div>
+		</div>
+	|| }
+|| end
+
+
+|| template Status(status string)
+<div class='status {{=status}}'>{{=strings.ToTitle(status)}}</div>
+|| end

@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os/exec"
 	"runtime"
+	"strings"
 	"time"
 
 	"github.com/pkg/browser"
@@ -24,8 +25,6 @@ var args struct {
 	Headless bool   `argum:"--headless" help:"do not open url in browser"`
 }
 
-var t *Testergo
-
 func init() {
 	argum.MustParse(&args)
 	log.SetFlags(log.Lshortfile)
@@ -39,7 +38,7 @@ func main() {
 }
 
 func initTestergo(dir, addr string, headless bool) (err error) {
-	t = &Testergo{
+	t := &Testergo{
 		addr: parseAddr(addr),
 	}
 
@@ -53,9 +52,13 @@ func initTestergo(dir, addr string, headless bool) (err error) {
 		return
 	}
 
-	http.Handle("/ws", rattle.SetControllers(t))
-	rattle.SetOnConnect(t.onConnect)
+	// rattle.Debug = true
+	r := rattle.NewRattle()
+	r.AddRoute("state", t.State)
+	r.AddRoute("changewd", t.ChangeWD)
+	r.SetOnConnect(t.onConnect)
 
+	http.Handle("/ws", r.Handler())
 	http.HandleFunc("/", t.Index)
 	http.HandleFunc("/assets/", t.Assets)
 
@@ -122,24 +125,39 @@ func (t *Testergo) Assets(w http.ResponseWriter, r *http.Request) {
 // WEBSOCKET
 //
 
-func (*Testergo) State(r *rattle.Conn) {
+func (t *Testergo) State(r *rattle.Request) {
 	r.NewMessage("status", []byte(t.tester.Status)).Send()
 	r.NewMessage("=main", templates.Tests(t.tester)).Send()
 }
 
-func (*Testergo) onConnect(r *rattle.Conn) {
+func (t *Testergo) onConnect(r *rattle.Request) {
 	t.State(r)
 
 	for {
 		c := <-t.event
 
 		if !c {
-			r.NewMessage("loading").Send()
+			r.NewMessage("loading", nil).Send()
 			continue
 		}
 
 		t.State(r)
 	}
+}
+
+func (t *Testergo) ChangeWD(r *rattle.Request) {
+	dir := strings.Trim(string(r.Data), `"`)
+	err := t.tester.SetWD(dir)
+	if err != nil {
+		t.tester.Status = tester.StatusFail
+		log.Println(err)
+	}
+	t.State(r)
+}
+
+func (t *Testergo) Reload(r *rattle.Request) {
+	t.tester.RunTests()
+	t.State(r)
 }
 
 func browserCmd() (string, bool) {

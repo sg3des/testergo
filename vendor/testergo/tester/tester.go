@@ -59,6 +59,17 @@ func (t *Tester) Start() (chan bool, error) {
 	return c, t.watcher.Add(t.Dir)
 }
 
+func (t *Tester) SetWD(dir string) error {
+	if err := t.watcher.Remove(t.Dir); err != nil {
+		return err
+	}
+
+	t.Dir = dir
+	t.RunTests()
+
+	return t.watcher.Add(dir)
+}
+
 func (t *Tester) Close() error {
 	t.running = false
 	return t.watcher.Close()

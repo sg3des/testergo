@@ -6,7 +6,7 @@ html{font-family: sans-serif; background: #252525; color: #eee;}
 #status.fail{background: #aa4433;}
 #status.panic{background: #aa2211;}
 
-nav{line-height: 30px; padding-left: 15px; background: #333;}
+
 
 .func{padding-left: 15px; border-bottom: 1px;}
 .func:nth-child(even){background: #252525;}
@@ -28,3 +28,11 @@ nav{line-height: 30px; padding-left: 15px; background: #333;}
 	50% {left:90%;}
 	100% {left:0;}
 }
+
+table{border-collapse: collapse;}
+#toolbar{line-height: 30px; background: #333; width: 100%;} 
+#reload{width: 30px; line-height: 30px; display: block; text-align: center;}
+#wd{width: 100%; line-height: 28px; display: block; border: none; background: none; font-size: 1.1em; cursor: text; padding-left: 15px;}
+
+.btn:hover{background: rgba(255,255,255,0.05) !important;}
+.btn:focus, .btn:active{background: rgba(255,255,255,0.1) !important;}

@@ -13,7 +13,7 @@
 	<script src="/assets/main.js"></script>
 	<script src="/assets/rattle.js"></script>
 	<script type="application/javascript" defer>
-		new rattle.NewConnection("ws://{{=addr}}/ws", true);
+		var r = new rattle.NewConnection("ws://{{=addr}}/ws", true);
 	</script>
 </head>
 <body>
@@ -27,15 +27,21 @@
 || end
 
 || template Tests(t *tester.Tester)
-	<nav>{{=t.Dir}}</nav>
-	|| for _, r := range t.Response {
-		<div class='func {{=r.Status}}'>
-			<div class='name'>{{=r.Func}}</div>
-			<div class='log'>
-				|| for _, s := range r.Log {
-					<p>{{=s}}</p>
-				|| }
-			</div>
+<table id='toolbar'><tr>
+	<td>
+		<b id='reload' class='btn' onclick='r.send("reload")'>re</b>
+	<td width='100%'>
+		<input id='wd' class='btn' onchange='r.send("changewd", this.value)' value='{{=t.Dir}}'>
+</table>
+
+|| for _, r := range t.Response {
+	<div class='func {{=r.Status}}'>
+		<div class='name'>{{=r.Func}}</div>
+		<div class='log'>
+			|| for _, s := range r.Log {
+				<p>{{=s}}</p>
+			|| }
 		</div>
-	|| }
+	</div>
+|| }
 || end

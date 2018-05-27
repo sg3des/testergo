@@ -14,8 +14,5 @@ install: bindata
 run: build
 	./${name} --headless ./testdata
 
-
-
-
 bindata:
-	go-bindata -debug -ignore='\.scss' -ignore='\.go' -pkg=assets -o=${assets}/assets.go -prefix=${wd} -nocompress -nomemcopy ${assets}/fonts/ ${assets}
+	go-bindata ${DEBUG} -ignore='\.scss' -ignore='\.go' -pkg=assets -o=${assets}/assets.go -prefix=${wd} -nocompress -nomemcopy ${assets}/fonts/ ${assets}

@@ -56,6 +56,7 @@ func initTestergo(dir, addr string, headless bool) (err error) {
 	r := rattle.NewRattle()
 	r.AddRoute("state", t.State)
 	r.AddRoute("changewd", t.ChangeWD)
+	r.AddRoute("reload", t.Reload)
 	r.SetOnConnect(t.onConnect)
 
 	http.Handle("/ws", r.Handler())

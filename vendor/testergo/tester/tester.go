@@ -7,8 +7,16 @@ import (
 	"os/exec"
 	"regexp"
 	"strings"
+	"time"
 
 	"github.com/fsnotify/fsnotify"
+)
+
+type State int
+
+const (
+	StateTesting State = 0
+	StateDone    State = 1
 )
 
 const (
@@ -50,13 +58,16 @@ func NewTester(dir string) (*Tester, error) {
 	return &Tester{Dir: dir, watcher: watcher}, nil
 }
 
-func (t *Tester) Start() (chan bool, error) {
+func (t *Tester) Start() (chan State, error) {
 	t.RunTests()
 
-	c := make(chan bool)
-	go t.events(c)
+	webchan := make(chan State)
+	fschan := make(chan State)
 
-	return c, t.watcher.Add(t.Dir)
+	go t.events(fschan)
+	go t.channels(webchan, fschan)
+
+	return webchan, t.watcher.Add(t.Dir)
 }
 
 func (t *Tester) SetWD(dir string) error {
@@ -75,18 +86,33 @@ func (t *Tester) Close() error {
 	return t.watcher.Close()
 }
 
-func (t *Tester) events(c chan bool) {
+func (t *Tester) events(fschan chan State) {
 	t.running = true
 
 	for t.running {
 		select {
 		case <-t.watcher.Events:
-			c <- false
-			t.RunTests()
-			c <- true
+			fschan <- StateDone
 
 		case err := <-t.watcher.Errors:
 			log.Println("error:", err)
+		}
+	}
+}
+
+func (t *Tester) channels(webchan, fschan chan State) {
+	dur := 200 * time.Millisecond
+	timer := time.NewTimer(dur)
+
+	for t.running {
+		select {
+		case <-fschan:
+			webchan <- StateTesting
+			timer.Reset(dur)
+
+		case <-timer.C:
+			t.RunTests()
+			webchan <- StateDone
 		}
 	}
 }

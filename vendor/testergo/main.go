@@ -82,7 +82,7 @@ func parseAddr(addr string) string {
 type Testergo struct {
 	addr   string
 	tester *tester.Tester
-	event  chan bool
+	event  chan tester.State
 }
 
 //
@@ -135,9 +135,9 @@ func (t *Testergo) onConnect(r *rattle.Request) {
 	t.State(r)
 
 	for {
-		c := <-t.event
+		state := <-t.event
 
-		if !c {
+		if state == tester.StateTesting {
 			r.NewMessage("loading", nil).Send()
 			continue
 		}

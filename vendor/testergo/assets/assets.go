@@ -78,7 +78,7 @@ func assetsFailPng() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "assets/fail.png", size: 622, mode: os.FileMode(420), modTime: time.Unix(1527248771, 0)}
+	info := bindataFileInfo{name: "assets/fail.png", size: 622, mode: os.FileMode(420), modTime: time.Unix(1527666231, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -98,7 +98,7 @@ func assetsMainCss() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "assets/main.css", size: 1459, mode: os.FileMode(420), modTime: time.Unix(1527345595, 0)}
+	info := bindataFileInfo{name: "assets/main.css", size: 1459, mode: os.FileMode(420), modTime: time.Unix(1527666231, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -118,7 +118,7 @@ func assetsMainJs() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "assets/main.js", size: 445, mode: os.FileMode(420), modTime: time.Unix(1527306912, 0)}
+	info := bindataFileInfo{name: "assets/main.js", size: 445, mode: os.FileMode(420), modTime: time.Unix(1527666231, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -138,7 +138,7 @@ func assetsPanicPng() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "assets/panic.png", size: 500, mode: os.FileMode(420), modTime: time.Unix(1527248833, 0)}
+	info := bindataFileInfo{name: "assets/panic.png", size: 500, mode: os.FileMode(420), modTime: time.Unix(1527666231, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -158,7 +158,7 @@ func assetsPassPng() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "assets/pass.png", size: 509, mode: os.FileMode(420), modTime: time.Unix(1527248842, 0)}
+	info := bindataFileInfo{name: "assets/pass.png", size: 509, mode: os.FileMode(420), modTime: time.Unix(1527666231, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -178,7 +178,7 @@ func assetsRattleJs() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "assets/rattle.js", size: 6268, mode: os.FileMode(420), modTime: time.Unix(1527358793, 0)}
+	info := bindataFileInfo{name: "assets/rattle.js", size: 6268, mode: os.FileMode(420), modTime: time.Unix(1527666231, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
